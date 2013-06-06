@@ -401,6 +401,10 @@ class openssh (
       mode    => 0644,
       require => Package['openssh'];
     }
+
+    resources { 'sshkey':
+      purge => true;
+    }
   }
 
 
