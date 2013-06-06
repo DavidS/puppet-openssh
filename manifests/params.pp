@@ -95,7 +95,11 @@ class openssh::params {
   $source = ''
   $source_dir = ''
   $source_dir_purge = false
-  $template = ''
+  $template = $::lsbdistcodename ? {
+    # as of openssh-server 1:6.2p2-3, the default config is the same as for wheezy
+    /^(?i:wheezy|jessie|sid)$/ => 'openssh/sshd_config-6.0.erb',
+    default                    => '',
+  }
   $options = ''
   $service_autorestart = true
   $absent = false
