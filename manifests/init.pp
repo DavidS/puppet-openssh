@@ -174,8 +174,14 @@
 # [*log_file*]
 #   Log file(s). Used by puppi
 #
+# [*address*]
+#   The listening address, if any, of the service.
+#   This is used by monitor, firewall and puppi (optional) components
+#   Note: This doesn't necessarily affect the service configuration file
+#   Can be defined also by the (top scope) variable $openssh_address
+#
 # [*port*]
-#   The listening port, if any, of the service.
+#   The listening port, if any, of the service. Default is '*'.
 #   This is used by monitor, firewall and puppi (optional) components
 #   Note: This doesn't necessarily affect the service configuration file
 #   Can be defined also by the (top scope) variable $openssh_port
@@ -237,6 +243,7 @@ class openssh (
   $data_dir            = params_lookup( 'data_dir' ),
   $log_dir             = params_lookup( 'log_dir' ),
   $log_file            = params_lookup( 'log_file' ),
+  $address             = params_lookup( 'address' ),
   $port                = params_lookup( 'port' ),
   $protocol            = params_lookup( 'protocol' )
   ) inherits openssh::params {
@@ -378,9 +385,14 @@ class openssh (
       default => "[${::fqdn}]:$port",
     }
 
+    $ssh_ipaddress = $openssh::address ? {
+      '*'     => $::ipaddress,
+      default => $openssh::address,
+    }
+
     $ssh_key_address = $port ? {
-      22 => $::ipaddress,
-      default => "[${::ipaddress}]:$port",
+      22 => $ssh_ipaddress,
+      default => "[${ssh_ipaddress}]:$port",
     }
 
     @@sshkey { $ssh_key_fqdn:

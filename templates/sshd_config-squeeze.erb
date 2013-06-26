@@ -4,8 +4,13 @@
 # What ports, IPs and protocols we listen for
 Port <%= scope.lookupvar('openssh::port') %>
 # Use these options to restrict which interfaces/protocols sshd will bind to
+<% listen_address = scope.lookupvar('openssh::address') -%>
+<% if listen_address == '*' -%>
 #ListenAddress ::
 #ListenAddress 0.0.0.0
+<% else -%>
+ListenAddress <%= listen_address %>
+<% end -%>
 Protocol 2
 # HostKeys for protocol version 2
 HostKey /etc/ssh/ssh_host_rsa_key
